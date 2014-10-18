@@ -69,7 +69,14 @@ class Signal<T_rv(Args...)> : private Observer
     {
         connect<T, mem_ptr>(std::addressof(instance));
     }
-    
+#ifdef NANO_ALLOW_FUNCTION_OBJECTS
+    template <typename L>
+    void connect(L* instance)
+    {
+        Observer::insert(Function::template bind(instance));
+    }
+#endif
+
     //----------------------------------------------------------------DISCONNECT
 
     template <T_rv (*fun_ptr)(Args...)>
@@ -101,7 +108,14 @@ class Signal<T_rv(Args...)> : private Observer
     {
         disconnect<T, mem_ptr>(std::addressof(instance));
     }
-    
+#ifdef NANO_ALLOW_FUNCTION_OBJECTS
+    template <typename L>
+    void disconnect(L* instance)
+    {
+        Observer::remove(Function::template bind(instance));
+    }
+#endif
+
     //----------------------------------------------------------------------EMIT
 
     void operator() (Args... args)

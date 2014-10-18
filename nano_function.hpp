@@ -54,6 +54,14 @@ class Function<T_rv(Args...)>
         return (static_cast<T*>(this_ptr)->*mem_ptr)
             (std::forward<Args>(args)...); }};
     }
+#ifdef NANO_ALLOW_FUNCTION_OBJECTS
+    template <typename L>
+    static inline Function bind(L* pointer)
+    {
+        return { pointer, [](void *this_ptr, Args... args) {
+        return (static_cast<L*>(this_ptr)->operator()(args...)); }};
+    }
+#endif
 
     inline T_rv operator() (Args... args)
     {
